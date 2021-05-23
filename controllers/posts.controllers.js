@@ -30,16 +30,9 @@ controller = {
 
     newPost: async (req, res) => {  
         
-        const sendErrors = {}
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            sendErrors.validator =  { errors: errors.array() }
-        }
-        if(req.categoryError){
-            sendErrors.category_error =  req.categoryError 
-        }
-        if(Object.keys(sendErrors).length>0){
-            return res.status(400).json(sendErrors);
+            return res.status(400).json({ errors: errors.array() });
         }
         
         try {
