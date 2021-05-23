@@ -9,14 +9,14 @@ const { body, param } = require("express-validator");
 
 
 // Routes
-router.get("/posts/", controller.getPosts);
+router.get("/", controller.getPosts);
 
-router.get("/posts/:id", idValidation, controller.getPostById);
+router.get("/:id", idValidation, controller.getPostById);
 
-router.post("/posts", postValidations, controller.newPost);
+router.post("/", postValidations, controller.newPost);
 
-router.patch("/posts/:id", patchValidations,controller.updatePost);
+router.patch("/:id", patchValidations,controller.updatePost);
 
-router.delete("/posts/:id", controller.deletePost);
+router.delete("/:id", controller.deletePost);
 
 module.exports = router;
