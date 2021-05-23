@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const controller = require("../controllers/posts.controllers");
 const validate = require("../middlewares/patchValidations");
-const { body } = require("express-validator");
+const { body, param } = require("express-validator");
 
 const categories_options = [
     " 1 : Frenos",
@@ -16,7 +16,13 @@ const categories_options = [
 // Routes
 router.get("/posts/", controller.getPosts);
 
-router.get("/posts/:id", controller.getPostById);
+router.get("/posts/:id",
+    param("id")
+        .exists({checkFalsy: true})
+            .withMessage("id required!")    
+        .isNumeric()
+            .withMessage("id must be a number!"),    
+controller.getPostById);
 
 router.post(
     "/posts",

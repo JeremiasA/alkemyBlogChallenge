@@ -14,6 +14,11 @@ controller = {
     },
 
     getPostById: async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json(errors);
+        }
+
         try {
             const result = await repository.getPostById(req.params.id);
             if (result) return res.status(200).json(result);
