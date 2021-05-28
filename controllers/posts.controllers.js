@@ -4,40 +4,44 @@ const { validationResult } = require("express-validator");
 
 controller = {
     getPosts: async (req, res) => {
-        const result = await repository.getPosts();
-        if (result.error) res.status(400).json({ error: result.error });
-        else res.status(200).json(result);
-        return;
+      try {
+          const result = await repository.getPosts();
+          if (result) return res.status(200).json(result); 
+          
+        } catch (err) {
+            return res.status(500).json({ error : err });
+        }
     },
 
     getPostById: async (req, res) => {
-        const result = await repository.getPostById(req.params.id);
-        if (result.error) res.status(400).json({ error: result.error });
-        else res.status(200).json(result);
-        return;
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json(errors);
+        }
+
+        try {
+            const result = await repository.getPostById(req.params.id);
+            if (result) return res.status(200).json(result);
+            else  return res.status(404).json({message : "Post not found."})
+        } catch (err) {
+           return res.status(500).json({ error : err });
+        }
     },
 
     newPost: async (req, res) => {  
         
-        // validation results
-        const sendErrors = {}
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            sendErrors.validator =  { errors: errors.array() }
-        }
-        if(req.categoryError){
-            sendErrors.category_error =  req.categoryError 
-        }
-        if(Object.keys(sendErrors).length>0){
-            return res.status(400).json(sendErrors);
+            return res.status(400).json({ errors: errors.array() });
         }
         
-        
-        // call repo
-        const result = await repository.newPost(req.body);
-        if (result.error) res.status(400).json({ error: result.error });
-        else res.status(200).json(result.message);
-        return;
+        try {
+            const result = await repository.newPost(req.body);
+            if (result) return res.status(200).json({message : "Post added to database OK!"});
+            
+        } catch (err) {
+            return res.status(500).json({ error: err });
+        }
     },
 
     updatePost: async (req, res) => {
@@ -48,17 +52,25 @@ controller = {
         }
         
         // call repo
-        const result = await repository.updatePost(req.params.id, req.body);
-        if (result.error) res.status(400).json({ error: result.error });
-        else res.status(200).json(result);
-        return;
+        try {
+            const result = await repository.updatePost(req.params.id, req.body);
+            if (result==1) return res.status(200).json({message : "Post modified OK!"});
+            else return res.status(404).json({ message: "Post not found!" }); 
+        } catch (err) {
+           return res.status(500).json({ error: err });
+        }
     },
 
     deletePost: async (req, res) => {
-        const result = await repository.deletePost(req.params.id);
-        if (result.error) res.status(400).json({ error: result.error });
-        else res.status(200).json(result.message);
-        return;
+        try {
+            const result = await repository.deletePost(req.params.id);
+            console.log(result);
+            if (result) return res.status(200).json({message : `Post with id = ${req.params.id} deleted!`});
+            else return res.status(404).json({ message : "Post not found!" }); 
+            
+        } catch (err) {
+           return res.status(500).json({ error : err }) 
+        }
     },
 };
 

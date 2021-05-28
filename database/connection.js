@@ -28,12 +28,12 @@ Post.belongsTo(Category);
     await sequelize.sync({force:false}).catch(error => {err = error})
     if(err) console.log('Unable to synchronize database:', err)    
     else{
-         console.log('database synchronization Ok!');
-    //populate
-    // require('../populate') 
-    }
-})();
+        console.log('database synchronization Ok!');
 
+         //populate
+         // require('../populate') 
+        }
+})();
 
 
 module.exports = {Post, Category};
